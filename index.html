@@ -12,7 +12,9 @@
 
     <title>Raster Plot (USA)</title>
     <h1 style="margin-left: 5%; margin-right: 5%">
-        There are higher populations in states that have more counties.
+        Theory:
+        <br>Because Columbus landed on the Coast, there are higher populations in counties on the East Coast than the
+        West Coast.
     </h1>
 
 
@@ -38,8 +40,8 @@
         const projection = d3.geoAlbersUsa()              // GPS of location to zoom on
             .scale(1500)                       // This is like the zoom
 
-            // state borders start
-   d3.json("./data/state_border_110m.json").then(function (data) {
+        // state borders start
+        d3.json("./data/state_border_110m.json").then(function (data) {
 
             // Filter data
             // data.features = data.features.filter(d => { console.log(d.properties.name); return d.properties.name == "Montana" })
@@ -57,26 +59,57 @@
                 .style('opacity', "40%")
         })
 
-        d3.json("./data/ne_10m_admin_2_counties.json").then(function (data) {
+        // d3.json("./data/ne_10m_admin_2_counties.json").then(function (data) {
+        d3.json("./data/counties_5m.json").then(function (data) {
 
             // Filter data
-            // data.features = data.features.filter(d => { console.log(d.properties.name); return d.properties.name == "Montana" })
+            data.features = data.features.filter(d => {
+                console.log(Math.min(d.properties.CENSUSAREA));
+                return d.properties.CENSUSAREA >= 1
+            })
 
             // Draw the map
             svg.append("g")
                 .selectAll("path")
                 .data(data.features)
                 .join("path")
-                .attr("fill", "none")
+                // if/else statement to pick colors
+                .attr("fill", (data.features = (d) => {
+                    if (d.properties.CENSUSAREA <= 250) {
+                        return "#A6D8E3"
+                    } else if (d.properties.CENSUSAREA <= 500) {
+                        return "#8B7EBF"
+                    } else if (d.properties.CENSUSAREA <= 1000) {
+                        return "#8890DE"
+                    } else if (d.properties.CENSUSAREA <= 2500) {
+                        return "#8650EA"
+                    } else if (d.properties.CENSUSAREA <= 5000) {
+                        return "#A638E1"
+                    } else if (d.properties.CENSUSAREA <= 8000) {
+                        return "#6824E5"
+                    } else if (d.properties.CENSUSAREA <= 15000) {
+                        return "#4613A4"
+                    } else if (d.properties.CENSUSAREA <= 25000) {
+                        return "#2F0D6E"
+                    } else if (d.properties.CENSUSAREA > 25000) {
+                        return "#4F25E8"
+                    } else {
+                        return "red"
+                    }
+                }))
                 .attr("d", d3.geoPath()
                     .projection(projection)
                 )
-                .style("stroke", "rgb(0,0,0)")
-                .style('opacity', "10%")
+                .style("stroke", "none")
+                .style('opacity', "45%")
 
         })
 
-        
+        // to do: create color scale
+        // to do: create Population by state
+        // to do: create amount of counties in each state
+
+
         // create legend
         // svg.append("circle").attr("cx", width - 50).attr("cy", 130).attr("r", 7).style("fill", "#b31b1b")
         // svg.append("text").attr("x", width - 40).attr("y", 130).text("Popular City").style("font-size", "15px").attr("alignment-baseline", "middle")
