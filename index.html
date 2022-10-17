@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <link rel="stylesheet" href="index.css">
+
+</head>
+
+<body>
+
+    <title>Raster Plot (USA)</title>
+    <h1 style="margin-left: 5%; margin-right: 5%">
+        There are higher populations in states that have more counties.
+    </h1>
+
+
+    </p>
+    <hr style="margin-left: 5%; margin-right: 5%;">
+
+
+    <svg id="map"></svg>
+
+    <script>
+
+        var margin = { top: 80, right: 200, bottom: 100, left: 100 },
+            width = 900,
+            height = 625;
+
+        var svg = d3.select("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + (margin.left + 50) + "," + (margin.top + margin.bottom) + ")");
+
+        const projection = d3.geoAlbersUsa()              // GPS of location to zoom on
+            .scale(1500)                       // This is like the zoom
+
+            // state borders start
+   d3.json("./data/state_border_110m.json").then(function (data) {
+
+            // Filter data
+            // data.features = data.features.filter(d => { console.log(d.properties.name); return d.properties.name == "Montana" })
+
+            // Draw the map
+            svg.append("g")
+                .selectAll("path")
+                .data(data.features)
+                .join("path")
+                .attr("fill", "none")
+                .attr("d", d3.geoPath()
+                    .projection(projection)
+                )
+                .style("stroke", " rgb(0,0,0)")
+                .style('opacity', "40%")
+        })
+
+        d3.json("./data/ne_10m_admin_2_counties.json").then(function (data) {
+
+            // Filter data
+            // data.features = data.features.filter(d => { console.log(d.properties.name); return d.properties.name == "Montana" })
+
+            // Draw the map
+            svg.append("g")
+                .selectAll("path")
+                .data(data.features)
+                .join("path")
+                .attr("fill", "none")
+                .attr("d", d3.geoPath()
+                    .projection(projection)
+                )
+                .style("stroke", "rgb(0,0,0)")
+                .style('opacity', "10%")
+
+        })
+
+        
+        // create legend
+        // svg.append("circle").attr("cx", width - 50).attr("cy", 130).attr("r", 7).style("fill", "#b31b1b")
+        // svg.append("text").attr("x", width - 40).attr("y", 130).text("Popular City").style("font-size", "15px").attr("alignment-baseline", "middle")
+        // svg.append("circle").attr("cx", width - 50).attr("cy", 100).attr("r", 7).style("fill", "#3d4ed1")
+        // svg.append("text").attr("x", width - 40).attr("y", 100).text("Fishing Access ").style("font-size", "15px").attr("alignment-baseline", "middle")
+        // svg.append("circle").attr("cx", width - 50).attr("cy", 160).attr("r", 7).style("fill", "#b31b1b").style("opacity", .35)
+        // svg.append("text").attr("x", width - 40).attr("y", 160).text("Less Popular Towns").style("font-size", "15px").attr("alignment-baseline", "middle")
+
+
+
+    </script>
+</body>
+
+</html>

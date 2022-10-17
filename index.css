@@ -1,0 +1,19 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background: white;
+    
+}
+
+svg {
+    background-color: aliceblue;
+    margin-left: 5%;
+    margin-right: 5%;
+    
+}
+
+div {
+    background-color: rgb(0, 0, 0);
+}
