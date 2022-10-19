@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <link rel="stylesheet" href="index.css">
 
 </head>
@@ -11,11 +12,17 @@
 <body>
 
     <title>Raster Plot (USA)</title>
+
+    <ul>
+        <li><a class="active" href="#home">Raster Plot</a></li>
+
+    </ul>
+
     <h1 style="margin-left: 5%; margin-right: 5%">
-        Theory:
-        <br>Because Columbus landed on the Coast, there are higher populations in counties on the East Coast than the
-        West Coast.
+        Hypothesis:
     </h1>
+    <h2>Because Columbus landed on the East Coast, there are higher populated counties in the East than the
+        West.</h2>
 
 
     </p>
@@ -25,8 +32,7 @@
     <svg id="map"></svg>
 
     <script>
-
-        var margin = { top: 80, right: 200, bottom: 100, left: 100 },
+        var margin = { top: 65, right: 350, bottom: 30, left: 100 },
             width = 900,
             height = 625;
 
@@ -59,14 +65,27 @@
                 .style('opacity', "40%")
         })
 
+        // zoom event handler
+        function handleZoom(e) {
+            d3.select('svg g')
+                .attr('transform', e.transform);
+        }
+
+        let zoom = d3.zoom()
+            .on('zoom', handleZoom).scaleExtent([.75, 5])
+
+
+        d3.select('svg')
+            .call(zoom);
+
         // d3.json("./data/ne_10m_admin_2_counties.json").then(function (data) {
         d3.json("./data/counties_5m.json").then(function (data) {
 
-            // Filter data
-            data.features = data.features.filter(d => {
-                console.log(Math.min(d.properties.CENSUSAREA));
-                return d.properties.CENSUSAREA >= 1
-            })
+            // // Filter data
+            // data.features = data.features.filter(d => {
+            //     console.log(Math.min(d.properties.CENSUSAREA));
+            //     return d.properties.CENSUSAREA >= 1
+            // })
 
             // Draw the map
             svg.append("g")
@@ -76,47 +95,173 @@
                 // if/else statement to pick colors
                 .attr("fill", (data.features = (d) => {
                     if (d.properties.CENSUSAREA <= 250) {
-                        return "#A6D8E3"
+                        return "#42a5e3"
                     } else if (d.properties.CENSUSAREA <= 500) {
-                        return "#8B7EBF"
+                        return "#4272e3"
                     } else if (d.properties.CENSUSAREA <= 1000) {
-                        return "#8890DE"
-                    } else if (d.properties.CENSUSAREA <= 2500) {
-                        return "#8650EA"
-                    } else if (d.properties.CENSUSAREA <= 5000) {
-                        return "#A638E1"
-                    } else if (d.properties.CENSUSAREA <= 8000) {
+                        return "#7d42e3"
+                    } else if (d.properties.CENSUSAREA <= 2000) {
+                        return "#a342e3"
+                    } else if (d.properties.CENSUSAREA <= 4000) {
+                        return "#d642e3"
+                    } else if (d.properties.CENSUSAREA <= 6000) {
                         return "#6824E5"
-                    } else if (d.properties.CENSUSAREA <= 15000) {
-                        return "#4613A4"
-                    } else if (d.properties.CENSUSAREA <= 25000) {
-                        return "#2F0D6E"
-                    } else if (d.properties.CENSUSAREA > 25000) {
-                        return "#4F25E8"
+                    } else if (d.properties.CENSUSAREA <= 8000) {
+                        return "#e3427d"
+                    } else if (d.properties.CENSUSAREA <= 10000) {
+                        return "#e34255"
+                    } else if (d.properties.CENSUSAREA > 10000) {
+                        return "#c91c1c"
                     } else {
-                        return "red"
+                        return "black"
                     }
                 }))
                 .attr("d", d3.geoPath()
                     .projection(projection)
                 )
                 .style("stroke", "none")
-                .style('opacity', "45%")
+                .style('opacity', "70%")
 
         })
 
-        // to do: create color scale
-        // to do: create Population by state
-        // to do: create amount of counties in each state
+
+        // d3.json("https://raw.githubusercontent.com/ResidentMario/geoplot-data/master/usa-cities.geojson").then(function (data) {
+        d3.json("./data/populated_places.json").then(function (data) {
+
+            svg.append("g")
+                .selectAll("path")
+                .data(data.features)
+                .join("path")
+                .attr("fill", "black")
+                .attr("d", d3.geoPath()
+                    .projection(projection)
+                )
+
+        })
 
 
         // create legend
-        // svg.append("circle").attr("cx", width - 50).attr("cy", 130).attr("r", 7).style("fill", "#b31b1b")
-        // svg.append("text").attr("x", width - 40).attr("y", 130).text("Popular City").style("font-size", "15px").attr("alignment-baseline", "middle")
-        // svg.append("circle").attr("cx", width - 50).attr("cy", 100).attr("r", 7).style("fill", "#3d4ed1")
-        // svg.append("text").attr("x", width - 40).attr("y", 100).text("Fishing Access ").style("font-size", "15px").attr("alignment-baseline", "middle")
-        // svg.append("circle").attr("cx", width - 50).attr("cy", 160).attr("r", 7).style("fill", "#b31b1b").style("opacity", .35)
-        // svg.append("text").attr("x", width - 40).attr("y", 160).text("Less Popular Towns").style("font-size", "15px").attr("alignment-baseline", "middle")
+        svg.append("circle")
+            .attr("cx", width + margin.left)
+            .attr("cy", 200)
+            .attr("r", 7)
+            .style("fill", "#42a5e3")
+            .style('opacity', "70%")
+        svg.append("text")
+            .attr("x", width + margin.left + 35)
+            .attr("y", 200).text("Less than 250")
+            .style("font-size", "15px")
+            .attr("alignment-baseline", "middle")
+
+        svg.append("circle")
+            .attr("cx", width + margin.left)
+            .attr("cy", 230)
+            .attr("r", 7)
+            .style("fill", "#4272e3")
+            .style('opacity', "70%")
+        svg.append("text")
+            .attr("x", width + margin.left + 35)
+            .attr("y", 230).text("Less than 500")
+            .style("font-size", "15px")
+            .attr("alignment-baseline", "middle")
+
+        svg.append("circle")
+            .attr("cx", width + margin.left)
+            .attr("cy", 260)
+            .attr("r", 7)
+            .style("fill", "#7d42e3")
+            .style('opacity', "70%")
+        svg.append("text")
+            .attr("x", width + margin.left + 35)
+            .attr("y", 260).text("Less than 1000")
+            .style("font-size", "15px")
+            .attr("alignment-baseline", "middle")
+
+        svg.append("circle")
+            .attr("cx", width + margin.left)
+            .attr("cy", 290)
+            .attr("r", 7)
+            .style("fill", "#a342e3")
+            .style('opacity', "70%")
+        svg.append("text")
+            .attr("x", width + margin.left + 35)
+            .attr("y", 290).text("Less than 2000")
+            .style("font-size", "15px")
+            .attr("alignment-baseline", "middle")
+
+        svg.append("circle")
+            .attr("cx", width + margin.left)
+            .attr("cy", 320)
+            .attr("r", 7)
+            .style("fill", "#d642e3")
+            .style('opacity', "70%")
+        svg.append("text")
+            .attr("x", width + margin.left + 35)
+            .attr("y", 320).text("Less than 4000")
+            .style("font-size", "15px")
+            .attr("alignment-baseline", "middle")
+
+        svg.append("circle")
+            .attr("cx", width + margin.left)
+            .attr("cy", 350)
+            .attr("r", 7)
+            .style("fill", "#6824E5")
+            .style('opacity', "70%")
+        svg.append("text")
+            .attr("x", width + margin.left + 35)
+            .attr("y", 350).text("Less than 6000")
+            .style("font-size", "15px")
+            .attr("alignment-baseline", "middle")
+
+        svg.append("circle")
+            .attr("cx", width + margin.left)
+            .attr("cy", 380)
+            .attr("r", 7)
+            .style("fill", "#e3427d")
+            .style('opacity', "70%")
+        svg.append("text")
+            .attr("x", width + margin.left + 35)
+            .attr("y", 380).text("Less than 8000")
+            .style("font-size", "15px")
+            .attr("alignment-baseline", "middle")
+
+        svg.append("circle")
+            .attr("cx", width + margin.left)
+            .attr("cy", 410)
+            .attr("r", 7)
+            .style("fill", "#e34255")
+            .style('opacity', "70%")
+        svg.append("text")
+            .attr("x", width + margin.left + 35)
+            .attr("y", 410).text("Less than 10000")
+            .style("font-size", "15px")
+            .attr("alignment-baseline", "middle")
+
+        svg.append("circle")
+            .attr("cx", width + margin.left)
+            .attr("cy", 440)
+            .attr("r", 7)
+            .style("fill", "#c91c1c")
+            .style('opacity', "70%")
+        svg.append("text")
+            .attr("x", width + margin.left + 35)
+            .attr("y", 440).text("Greater than 10000")
+            .style("font-size", "15px")
+            .attr("alignment-baseline", "middle")
+
+        svg.append("circle")
+            .attr("cx", width + margin.left)
+            .attr("cy", 470)
+            .attr("r", 7)
+            .style("fill", "black")
+            .style('opacity', "70%")
+        svg.append("text")
+            .attr("x", width + margin.left + 35)
+            .attr("y", 470).text("Popular Cities")
+            .style("font-size", "15px")
+            .attr("alignment-baseline", "middle")
+
+
 
 
 
