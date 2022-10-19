@@ -124,10 +124,11 @@
 
         })
 
-
+        // plot us cities 
         d3.json("https://raw.githubusercontent.com/ResidentMario/geoplot-data/master/usa-cities.geojson").then(function (data) {
-        // d3.json("./data/populated_places.json").then(function (data) {
-
+            // d3.json("./data/populated_places.json").then(function (data) {
+            //     console.log(data.features[0].geometry.coordinates[0])
+            // trying to log data to plot points
             svg.append("g")
                 .selectAll("path")
                 .data(data.features)
@@ -142,6 +143,13 @@
 
 
         // create legend
+
+        svg.append("text")
+            .attr("x", width + margin.left )
+            .attr("y", 160).text("Population by County")
+            .style("font-size", "18px")
+            .attr("alignment-baseline", "middle")
+
         svg.append("circle")
             .attr("cx", width + margin.left)
             .attr("cy", 200)
