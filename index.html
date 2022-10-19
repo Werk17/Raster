@@ -125,8 +125,8 @@
         })
 
 
-        // d3.json("https://raw.githubusercontent.com/ResidentMario/geoplot-data/master/usa-cities.geojson").then(function (data) {
-        d3.json("./data/populated_places.json").then(function (data) {
+        d3.json("https://raw.githubusercontent.com/ResidentMario/geoplot-data/master/usa-cities.geojson").then(function (data) {
+        // d3.json("./data/populated_places.json").then(function (data) {
 
             svg.append("g")
                 .selectAll("path")
@@ -136,6 +136,7 @@
                 .attr("d", d3.geoPath()
                     .projection(projection)
                 )
+                .attr('opacity', .5)
 
         })
 
